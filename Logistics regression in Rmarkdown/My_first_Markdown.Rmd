@@ -1,0 +1,81 @@
+---
+title: "HW_2"
+author: "AJM170007"
+date: "November 1, 2018"
+output: html_document
+---
+
+
+```{r}
+#Lets load some packages
+
+library(dplyr)
+library(ggplot2)
+library(caret)
+
+#Lets load the dataset#
+s <- read.csv("SystemAdministrators.csv",header = T,stringsAsFactors = F) 
+
+##Lets create a scatterplot##
+color.codes<-as.character(c("#3399FF", "#FF0000"))
+color.names<-c("blue", "red")
+Completed.task <- c("Yes","No")
+df2 <- data.frame(Completed.task, color.codes, color.names)
+df <-merge(s,df2, by=("Completed.task"), all.x=TRUE, all.y=TRUE)
+ ggplot(data = df, aes(Experience, Training , colour = Completed.task))+ 
+  geom_point() +
+  scale_colour_manual(breaks = df$Completed.task, 
+                      values = unique(as.character(df$color.codes)))+
+ ggtitle("Experience VS Training") +
+  xlab("Experience") + ylab("Training")
+
+
+```
+
+
+**1) We can see from the above scatterplot that Experience appears potentially useful for classifying task completion because a higher percentage of the blue points which represents people who have completed tasks are present for experience>8 with training credits being 4**   
+
+```{r}
+
+##Lets run a logistic model using the entire data as the training dataset##
+
+df <- df[1:3]
+df$Completed.task <- ifelse(df$Completed.task=="Yes",1,0)
+logit.reg <- glm( Completed.task~ ., data = df, family = "binomial") 
+summary(logit.reg)
+pred <- as.data.frame(predict(logit.reg, type="response"))
+colnames(pred)[1] <- "Pred"
+pred$pred_class <- ifelse(pred$Pred>0.5,1,0)
+df <- cbind(df,pred)
+df$pred_class <- as.factor(df$pred_class)
+df$Completed.task <- as.factor(df$Completed.task)
+
+```
+```{r}
+###Confusion matrix##
+confusionMatrix(data=df$pred_class,df$Completed.task)
+
+```
+
+```{r}
+
+##Percentage of misclassified  programmers incorrectly classified as failing to complete the task#
+
+(5/15)*100
+
+```
+
+
+**2) Conclusion- It can be seen that,Among those who completed the task,33.33% of the programmers were incorrectly classified**
+
+
+**3)Logistic Regression equation**
+
+$log(odds) = -10.9813 + ( 1.1269 * Experience) + ( 0.1805 * Training)$
+
+**Where odds=0.6,Training=6**
+
+**Experience= 9.2364**
+
+**Conclusion:9.2364 years of experience should be accumulated by the programmer with 6 Training credits before his estimated probability of completing the tasks exceeds 0.6** 
+
