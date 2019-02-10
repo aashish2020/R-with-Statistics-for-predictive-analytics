@@ -1,0 +1,25 @@
+VARIABLE,DESCRIPTION
+Seq#,Sequence number in the sample
+ID#,ID# in the full dataset
+Gender,"0=male, 1=female"
+M,Monetary - total money spent on books
+R,Recency - Months since last purchase
+F,Frequency - Total number of purchases
+FirstPurch,Months since first purchase
+ChildBks,Number of purchases from the category child books
+YouthBks,Number of purchases from the category youth books
+CookBks,Number of purchases from the category cookbooks
+DoItYBks,Number of purchases from the category do-it-yourself books
+RefBks,"Number of purchases from the category reference books (atlases, encyclopedias, dictionaries)"
+ArtBks,Number of purchases from the category art books
+GeoBks,Number of purchases from the category geography books
+ItalCook,Number of purchases of book title Secrets of Italian Cooking
+ItalAtlas,Number of purchases of book title Historical Atlas of Italy
+ItalArt,Number of purchases of book title Italian Art
+Florence,= 1 if The Art History of Florence was bought; = 0 if not
+Related Purchase,Number of related books purchased
+Mcode,$0–$25 (Mcode = 1); $26–$50 (Mcode = 2); $51–$100 (Mcode = 3);  $101–$200 (Mcode = 4); $201 and up (Mcode = 5)
+Rcode,0–2 months (Rcode = 1); 3–6 months (Rcode = 2); 7–12 months (Rcode = 3); 13 months and up (Rcode = 4)
+Fcode,1 book (Fcode = l); 2 books (Fcode = 2); 3 books and up (Fcode = 3)
+Yes_Florence,(Florence =1)
+No_Florence,(Florence =0)
