@@ -1,0 +1,114 @@
+---
+title: "Support Vector Machine"
+subtitle: "(using e1071 package)"
+author: ""
+date: "January 30, 2019"
+output: 
+  html_document: 
+    theme: cerulean
+---
+
+
+```{r loadpackages, include = FALSE}
+library(e1071)
+library(ggplot2)
+library(caret)
+library(rmarkdown)
+library(corrplot)
+options(digits = 3)
+```
+
+```{r readdata}
+data(iris)
+dim(iris)
+str(iris)
+```
+
+_Drop Species variable  and check correlation:_
+```{r correlationplot}
+iris4 <- iris[, -5]
+cor(iris4)
+corrplot(cor(iris4), method = "color", type = "upper", tl.srt = 45)
+```
+
+
+_Check relationship between sepal length and width:_
+```{r lengthwidthplot1}
+ggplot(data=iris) +
+  geom_point(aes(x= Sepal.Length, y= Sepal.Width, color = Species))+
+  theme_classic()
+```
+
+_Check relationship between petal length and width:_
+```{r lengthwidthplot2}
+ggplot(data=iris) +
+  geom_point(aes(x= Petal.Length, y= Petal.Width, color = Species))+
+  theme_classic()
+```
+
+
+_Create data partition:_
+```{r datapartition}
+set.seed(123)
+trainindex <- createDataPartition(iris$Species, p=0.8, list= FALSE)
+iris_train <- iris[trainindex, ]
+iris_test <- iris[-trainindex, ]
+```
+
+
+### SVM Model  
+```{r modeling}
+svm1 <- svm(Species~., data=iris_train)
+summary(svm1)
+plot(svm1, data=iris_train, Petal.Width~Petal.Length,
+     slice = list(Sepal.Width = 3, Sepal.Length = 5),
+     color.palette = terrain.colors)
+
+ ## Performance Evaluation ##
+pred1 <- predict(svm1, iris_test)
+
+    # confusion matrix
+conf.matrix <- table(Predicted = pred1, Actual = iris_test$Species)
+conf.matrix
+  
+    # accuracy
+(sum(diag(conf.matrix))) / sum(conf.matrix)
+```
+
+
+Change Kernel used in  SVM model 
+svm2 <- svm(Species~., data=iris_train, kernel = "linear")
+svm3 <- svm(Species~., data=iris_train, kernel = "polynomial")
+svm4 <- svm(Species~., data=iris_train, kernel = "sigmoid")
+
+
+### Hyperparameter Optimization 
+```{r hyperparametertuning}
+  
+
+set.seed(123)
+tunesvm1 <- tune(svm, Species~., data = iris_train,
+     ranges = list(epsilon = seq(0,1,0.1), cost = 2^(2:7)))
+
+summary(tunesvm1)
+plot(tunesvm1)
+
+
+  ## Best SVM Model ##
+bestsvm1 <- tunesvm1$best.model
+summary(bestsvm1)
+plot(bestsvm1, data=iris_train, Petal.Width~Petal.Length,
+     slice = list(Sepal.Width = 3, Sepal.Length = 5),
+     color.palette = terrain.colors)
+
+bestpred1 <- predict(bestsvm1, iris_test)
+
+# confusion matrix
+conf.matrix2 <- table(Predicted = bestpred1, Actual = iris_test$Species)
+conf.matrix2
+
+  # accuracy
+(sum(diag(conf.matrix2))) / sum(conf.matrix2)
+
+```
+

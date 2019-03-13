@@ -1,0 +1,87 @@
+---
+title: "Support Vector Machine"
+subtitle: "(using Caret package)"
+author: ""
+date: "January 30, 2019"
+output: 
+  html_document: 
+    theme: cerulean
+---
+
+```{r loadpackages, include=FALSE}
+library(e1071)
+library(ggplot2)
+library(caret)
+library(rmarkdown)
+library(corrplot)
+options(digits = 3)
+```
+
+
+```{r readdata}
+heart_df <- read.csv("D:/Terms/Spring-2019/Adv BAR-Sourav/R_codes/Session_3/heart_disease.csv")
+dim(heart_df)
+str(heart_df)
+  
+  # convert target variable into factor
+heart_df$heartdisease <- as.factor(heart_df$heartdisease)
+```
+
+__Create data partition:__
+```{r datapartition}
+set.seed(42)
+trainindex <- createDataPartition(heart_df$heartdisease, p=0.8, list= FALSE)
+heart_train <- heart_df[trainindex, ]
+heart_test <- heart_df[-trainindex, ]
+```
+
+
+### Linear SVM using cross-validated data (using trControl option) 
+```{r svm}
+svm1 <- train(heartdisease ~., data = heart_train, 
+              method = "svmLinear",
+                    trControl=trainControl(method = "repeatedcv", 
+                                           number = 10, repeats = 3),  
+                    preProcess = c("center", "scale"),
+                    tuneLength = 10)
+
+svm1
+summary(svm1)
+  # Generate predictions
+pred1 <- predict(svm1, heart_test)
+pred1
+
+  # Performance evaluation - confusion matrix
+confusionMatrix(table(pred1, heart_test$heartdisease))
+```
+
+
+### Hyperparameter Optimization (Grid Search) 
+```{r hyperparametertuning, warning=FALSE}
+grid <- expand.grid(C=seq(0,2.5,0.1))
+svm_grid1 <- train(heartdisease ~., data = heart_train, 
+                   method = "svmLinear",
+                   trControl=trainControl(method = "repeatedcv", 
+                                          number = 10, repeats = 3),
+              preProcess = c("center", "scale"),
+              tuneGrid = grid,
+              tuneLength = 10)
+
+svm_grid1
+
+  # Plot the grid
+plot(svm_grid1)
+
+  # Generate predictions
+pred2 <- predict(svm_grid1, heart_test)
+pred2
+
+  # Performance evaluation - confusion matrix
+confusionMatrix(table(pred2, heart_test$heartdisease))
+```
+
+
+
+
+
+
