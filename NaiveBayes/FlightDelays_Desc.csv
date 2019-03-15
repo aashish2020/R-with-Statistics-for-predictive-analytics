@@ -1,0 +1,27 @@
+Source: Bureau of Transportation Statistics,
+,
+Variable explanations are in comments appended to column heads.,
+,
+Note the data has both scheduled and actual departure time - pay attention to which you use!,
+,
+,
+All flights out of 3 DC airports (WAS),
+into 3 NYC airports,
+not cancelled,
+flights in January 2004,
+,
+,
+Carrier Code,Carrier Name
+AA,"American Airlines, Inc."
+CO,"Continental Air Lines, Inc."
+DH,Atlantic Coast Airlines
+DL,"Delta Air Lines, Inc."
+EV,Atlantic Southeast Airlines
+FL,Airtran Airways Corporation
+MQ,"American Eagle Airlines,inc"
+OH,"Comair, Inc."
+RU,Continental Express Airline
+UA,"United Air Lines, Inc."
+US,"US Airways, Inc."
+,
+data codes are in labels ,

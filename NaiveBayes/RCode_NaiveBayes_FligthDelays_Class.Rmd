@@ -1,0 +1,82 @@
+---
+title: "NB Flight Delays"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+###Predicting flight delays using five variables -- day of the week, departure time, origin, destination, and carrier.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+__Load required packages:__
+```{r loadpackages, message=FALSE}
+library(e1071)
+library(caret)
+library(tidyverse)
+library(gains)
+```
+
+__Load the data set:__
+```{r loaddata}
+delays.df <- read.csv("FlightDelays.csv")
+
+  # use a subset of variables: 
+    #"DAY_WEEK", "CRS_DEP_TIME", "ORIGIN", "DEST", "CARRIER", "Flight.Status"
+
+  # Convert DAY_WEEK variable to categorical
+
+
+  # create hourly bins departure time 
+delays.df$CRS_DEP_TIME <- as.factor(round(delays.df$CRS_DEP_TIME/100))
+
+```
+
+__Partition the dataset:__
+```{r partition}
+set.seed(123)
+
+
+```
+
+
+__Run Naive Bayes:__
+```{r naivebayes}
+delays.nb <- naiveBayes(Flight.Status ~ ., data = train.df)
+delays.nb
+
+  # Flight status by destination (row probability)
+prop.table(table(train.df$Flight.Status, train.df$DEST), margin = 1)
+```
+  
+__Generate predictions:__
+```{r predictions}
+# probabilities
+pred.prob <- predict(                                , type = "raw")
+  # class membership
+pred.class <- predict(                            )
+
+  # Data frame with actual and predicted values
+df <- 
+```
+
+__Performace Evaluation:__
+```{r perfEval, echo=FALSE}
+  # Confusion Matrices _ test data
+
+
+
+  
+  ### Lift Chart
+gain <- gains(ifelse(test.df$Flight.Status=="delayed",1,0), pred.prob[,1], groups=100)
+
+plot(c(0,gain$cume.pct.of.total*sum(test.df$Flight.Status=="delayed"))~c(0,gain$cume.obs), 
+     xlab="# cases", ylab="Cumulative", main="Lift Chart", type="l", col = "firebrick2")
+lines(c(0,sum(test.df$Flight.Status=="delayed"))~c(0, dim(test.df)[1]), lty=2, col = "blue")
+
+```
+
